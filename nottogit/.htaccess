@@ -1,0 +1,13 @@
+RewriteEngine On
+ExpiresActive on
+
+RewriteRule ^([A-Za-z0-9]+)\.html$ index.php?page=$1
+
+RewriteCond %{HTTP_HOST} ^sh.rt$
+RewriteRule ^([A-Za-z0-9_\-]{2,8})$ http://sh.rt/redirect.php?id=$1 [P]
+RewriteRule ^([A-Za-z0-9_\-]{2,8})\+$ index.php?page=infos&id=$1
+RewriteRule ^([A-Za-z0-9_\-]{2,8})\+\+$ index.php?page=infos&id=$1&format=raw
+
+RewriteRule (^[A-Za-z0-9\-_]+\.(png|gif|svg|jpg|ico)$) template/images/$1
+RewriteRule (^[A-Za-z0-9\-_]+\.css$) template/styles/$1
+
