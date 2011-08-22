@@ -44,16 +44,16 @@ Redirect method (mod_proxy or mod_rewrite)
         <?php
 		
 		$configfile = fopen('config.php','w');
-		fwrite($configfile,'
+		fwrite($configfile,'<?php
 $config[\'shortid\'][\'pattern\'] = \'#^[A-Za-z0-9\-_]{2,8}$#\';
 $config[\'params\'][\'length\']= 5;
 $config[\'params\'][\'infochar\'] = \'+\';
-$config[\'params\'][\'multipleaddings\']= false
+$config[\'params\'][\'multipleaddings\']= false;
 $config[\'locale\'][\'default\'] = \'en-en\';
 $config[\'params\'][\'protocol\']= \'http\';
 $config[\'params\'][\'defaultservice\'] = 1;
 $config[\'params\'][\'defaultcustomid\'] = 1;
-$config[\'params\'][\'path\'] = '.realpath('.').'/\';
+$config[\'params\'][\'path\'] = \''.realpath('.').'/\';
 ');
 
 		foreach($_POST as $key=>$value){
@@ -109,7 +109,7 @@ $config[\'params\'][\'path\'] = '.realpath('.').'/\';
 				fwrite($configfile,'$config[\'params\'][\'allowautowebkey\']=false;
 ');
 		}
-		
+		fwrite($configfile,'?>');
 		fclose($configfile);
 		$htaccessfile = fopen('.htaccess','w');
 		fwrite($htaccessfile,'
@@ -121,14 +121,19 @@ RewriteCond %{HTTP_HOST} ^'.$_POST['domain'].'$
 RewriteRule ^([A-Za-z0-9_\-]{2,8})$ '.$_POST['domain'].'/redirect.php?id=$1
 RewriteRule ^([A-Za-z0-9_\-]{2,8})\+$ index.php?page=infos&id=$1
 RewriteRule ^([A-Za-z0-9_\-]{2,8})\+\+$ index.php?page=infos&id=$1&format=raw');
-echo $_POST['redirect_method'];
-		if($_POST['redirect_method']=='true'){
+
+		if($_POST['redirect_method']==true){
 			fwrite($htaccessfile,' [P]
 ');
-		}else{
-			fwrite($htaccessfile,'
-');
 		}
+		fwrite($htaccessfile,'
+
+RewriteRule (^[A-Za-z0-9\-_]+\.(png|gif|svg|jpg|ico)$) template/images/$1
+RewriteRule (^[A-Za-z0-9\-_]+\.css$) template/styles/$1
+');
+		fclose($htaccessfile);
+		
+		//mysql_query('INSERT INTO owners ('
 	}
 }
 
