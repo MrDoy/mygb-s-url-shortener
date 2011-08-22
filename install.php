@@ -133,7 +133,71 @@ RewriteRule (^[A-Za-z0-9\-_]+\.css$) template/styles/$1
 ');
 		fclose($htaccessfile);
 		
-		//mysql_query('INSERT INTO owners ('
+		mysql_connect($_POST['db_host'],$_POST['db_user'],$_POST['db_pass']);
+		mysql_select_db($_POST['db_base']);
+		
+		if(isset($_POST['allowcustomshortid'])){
+			$customshortid=1;
+		}else{
+			$customshortid=0;
+		}
+		
+		mysql_query(
+'CREATE TABLE IF NOT EXISTS `idtourl` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `keyid` int(11) NOT NULL,
+  `shortid` text NOT NULL,
+  `url` text NOT NULL,
+  `client` text NOT NULL,
+  `ip` text NOT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `state` int(11) NOT NULL,
+  `publicowner` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=629 ;
+
+CREATE TABLE IF NOT EXISTS `keyapi` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `owner` int(11) NOT NULL,
+  `service` int(11) NOT NULL,
+  `keytext` text NOT NULL,
+  `restriction` text NOT NULL,
+  `allowcustomid` tinyint(1) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `state` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
+
+CREATE TABLE IF NOT EXISTS `owner` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sessionid` text NOT NULL,
+  `username` text NOT NULL,
+  `password` text NOT NULL,
+  `email` text NOT NULL,
+  `loginip` text NOT NULL,
+  `registerip` text NOT NULL,
+  `lastlogin` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
+
+CREATE TABLE IF NOT EXISTS `service` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `host` text NOT NULL,
+  `length` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+INSERT INTO `service` (`id`, `host`, `length`) VALUES
+(1, \''.preg_replace('#https?:\/\/#','',$_POST['domain']).'\', 5);
+INSERT INTO `owner` (`id`, `username`, `password`, `email`, `loginip`, `registerip`, `lastlogin`) VALUES
+(1, \'test\', \'55c3b5386c486feb662a0785f340938f518d547f\', \'email@example.com\', "'.$_SERVER['REMOTE_ADDR'].'", "'.$_SERVER['REMOTE_ADDR'].'", NOW());
+INSERT INTO `keyapi` (`id`, `owner`, `service`, `keytext`, `allowcustomid`, `date`, `state`) VALUES
+(1, 1, 1, \"myfirstkey\", '.$customshortid.', NOW(), 0);
+
+
+');
+
+
 	}
 }
 
