@@ -1,0 +1,6 @@
+This is the readme of mygb's url shortener.
+
+You set up a domain (you can have multiple domains, they're called as services).
+With a token, the user can shorten urls.
+
+This script offers lots of functions like authentication, statistics keeping something simple for the user.
