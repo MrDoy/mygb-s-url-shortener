@@ -143,7 +143,8 @@ RewriteRule (^[A-Za-z0-9\-_]+\.css$) template/styles/$1
 		}
 		
 		mysql_query(
-'CREATE TABLE IF NOT EXISTS `idtourl` (
+'
+CREATE TABLE IF NOT EXISTS `idtourl` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `keyid` int(11) NOT NULL,
   `shortid` text NOT NULL,
@@ -155,7 +156,8 @@ RewriteRule (^[A-Za-z0-9\-_]+\.css$) template/styles/$1
   `publicowner` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=629 ;
-
+')or die(mysql_error());
+mysql_query('
 CREATE TABLE IF NOT EXISTS `keyapi` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `owner` int(11) NOT NULL,
@@ -167,7 +169,8 @@ CREATE TABLE IF NOT EXISTS `keyapi` (
   `state` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
-
+')or die(mysql_error());
+mysql_query('
 CREATE TABLE IF NOT EXISTS `owner` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `sessionid` text NOT NULL,
@@ -179,22 +182,21 @@ CREATE TABLE IF NOT EXISTS `owner` (
   `lastlogin` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
-
+');
+mysql_query('
 CREATE TABLE IF NOT EXISTS `service` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `host` text NOT NULL,
   `length` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
-
-INSERT INTO `service` (`id`, `host`, `length`) VALUES
+')or die(mysql_error());
+mysql_query('INSERT INTO `service` (`id`, `host`, `length`) VALUES
 (1, \''.preg_replace('#https?:\/\/#','',$_POST['domain']).'\', 5);
 INSERT INTO `owner` (`id`, `username`, `password`, `email`, `loginip`, `registerip`, `lastlogin`) VALUES
 (1, \'test\', \'55c3b5386c486feb662a0785f340938f518d547f\', \'email@example.com\', "'.$_SERVER['REMOTE_ADDR'].'", "'.$_SERVER['REMOTE_ADDR'].'", NOW());
 INSERT INTO `keyapi` (`id`, `owner`, `service`, `keytext`, `allowcustomid`, `date`, `state`) VALUES
 (1, 1, 1, \"myfirstkey\", '.$customshortid.', NOW(), 0);
-
-
 ');
 
 

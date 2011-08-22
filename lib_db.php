@@ -38,7 +38,7 @@ class libDb{
 			if(preg_match($this->shortidpattern,$shortid)){
 				if($this->ressource!=FALSE){
 					try{
-						$query = mysql_query('SELECT idtourl.id,idtourl.url FROM idtourl LEFT JOIN keyapi ON keyapi.id=idtourl.keyid LEFT JOIN service ON service.id=keyapi.service WHERE shortid = "'.$shortid.'" AND service.host="'.mysql_real_escape_string($properties['HTTP_HOST']).'"');
+						$query = mysql_query('SELECT idtourl.id,idtourl.url FROM idtourl LEFT JOIN keyapi ON keyapi.id=idtourl.keyid LEFT JOIN service ON service.id=keyapi.service WHERE shortid = "'.$shortid.'" AND service.host="'.mysql_real_escape_string($properties['HTTP_HOST']).'"')or die(mysql_error());
 						$url = mysql_fetch_assoc($query);
 						if(!empty($url)){
 							
@@ -100,7 +100,7 @@ class libDb{
 			
 			// Ajoutez user-agent !
 			$query.='")';
-			mysql_query($query);
+			mysql_query($query)or die(mysql_error());
 		}
 	}
 	public function addUrl($keyapi='',$url='',$client='',$shortid=''){
@@ -120,7 +120,7 @@ class libDb{
 			$query.=' AND keyapi.owner='.$_SESSION['logued'];
 		}
 		
-		$keyapisdb = mysql_query($query);
+		$keyapisdb = mysql_query($query)or die(mysql_error());
 		if(mysql_num_rows($keyapisdb)>=1){
 			
 			if(!preg_match('#^https?:\/\/[A-Za-z0-9\.\-_]+\.[A-Za-z0-9]+.*$#isU',$url)){
@@ -159,21 +159,21 @@ class libDb{
 						$queryadd = '';
 					}
 					$query = $querybase.$queryadd.' idtourl.shortid="'.$shortid.'"';
-					$urlsdb2 = mysql_query($query);
+					$urlsdb2 = mysql_query($query)or die(mysql_error());
 				}while(mysql_num_rows($urlsdb2)!=0);
 				
-				$urlsdb = mysql_query('SELECT idtourl.url,idtourl.shortid,keyapi.owner,service.host FROM idtourl LEFT JOIN keyapi ON keyapi.id=idtourl.keyid LEFT JOIN service ON service.id=keyapi.service WHERE idtourl.url="'.$url.'" AND keyapi.owner='.$_SESSION['logued'].' AND service.id='.$keyapitab['service']);
+				$urlsdb = mysql_query('SELECT idtourl.url,idtourl.shortid,keyapi.owner,service.host FROM idtourl LEFT JOIN keyapi ON keyapi.id=idtourl.keyid LEFT JOIN service ON service.id=keyapi.service WHERE idtourl.url="'.$url.'" AND keyapi.owner='.$_SESSION['logued'].' AND service.id='.$keyapitab['service'])or die(mysql_error());
 				if(mysql_num_rows($urlsdb)==0 || ($_SESSION['logued']==0 && $config['params']['allowstats']==true)){
 					$query2 = 'INSERT INTO idtourl (keyid,shortid,url,ip,client) VALUES('.$keyapitab['keyid'].',"'.$shortid.'","'.$url.'","'.$_SERVER['REMOTE_ADDR'].'","'.$client.'")';
 					if($_SESSION['logued']==0){
 						if(empty($_SESSION['publicid'])){
-							mysql_query('INSERT INTO owner (sessionid) VALUES("'.time().' - '.$_SERVER['REMOTE_ADDR'].'")');
+							mysql_query('INSERT INTO owner (sessionid) VALUES("'.time().' - '.$_SERVER['REMOTE_ADDR'].'")')or die(mysql_error());
 							$_SESSION['publicid']=mysql_insert_id();
 						}
 						
 						$query2 = 'INSERT INTO idtourl (keyid,shortid,url,ip,client,publicowner) VALUES('.$keyapitab['keyid'].',"'.$shortid.'","'.$url.'","'.$_SERVER['REMOTE_ADDR'].'","'.$client.'","'.$_SESSION['publicid'].'")';
 					}
-					mysql_query($query2);
+					mysql_query($query2)or die(mysql_error());
 					echo 'http://'.$keyapitab['host'].'/'.$shortid.'
 ';
 				}else{
@@ -228,7 +228,7 @@ class libDb{
 		}
 		$query.= ' GROUP BY idtourl.id 
 		ORDER BY idtourl.id ASC';
-		$query2 = mysql_query($query);
+		$query2 = mysql_query($query)or die(mysql_error());
 		$returnarray=array();
 		while($result = mysql_fetch_assoc($query2)){
 			$returnarray[] = $result;
@@ -277,7 +277,7 @@ class libDb{
 		AND (keyapi.owner='.$_SESSION['logued'].' OR idtourl.publicowner='.$_SESSION['publicid'].')';
 		}
 		
-		$query2 = mysql_query($query);
+		$query2 = mysql_query($query)or die(mysql_error());
 		
 		$returnarray=array();
 		while($result = mysql_fetch_assoc($query2)){
@@ -296,18 +296,18 @@ class libDb{
 		if(!preg_match('#[A-Za-z0-9\.\-_\+@]+@[A-Za-z0-9\.\-\_]+#',$email)){
 			return 3;
 		}
-		$result = mysql_query('SELECT username FROM owner WHERE username="'.mysql_real_escape_string($username).'" OR email="'.addslashes($email).'"');
+		$result = mysql_query('SELECT username FROM owner WHERE username="'.mysql_real_escape_string($username).'" OR email="'.addslashes($email).'"')or die(mysql_error());
 		if(mysql_num_rows($result)!=0){
 			return 4;
 		}
 		
-		mysql_query('INSERT INTO owner (username,password,email,registerip,loginip,lastlogin) VALUES("'.mysql_real_escape_string(htmlentities($username)).'","'.sha1(md5($password)).'","'.mysql_real_escape_string($email).'","'.$_SERVER['REMOTE_ADDR'].'","'.$_SERVER['REMOTE_ADDR'].'",NOW())');
+		mysql_query('INSERT INTO owner (username,password,email,registerip,loginip,lastlogin) VALUES("'.mysql_real_escape_string(htmlentities($username)).'","'.sha1(md5($password)).'","'.mysql_real_escape_string($email).'","'.$_SERVER['REMOTE_ADDR'].'","'.$_SERVER['REMOTE_ADDR'].'",NOW())')or die(mysql_error());
 		//$userid = mysql_insert_id();
 		//$_SESSION['logued']=$userid;
 		$this->verifyLogin($username,$password);
 		include('config.php');
 		if($config['params']['allowautowebkey']){
-			mysql_query('INSERT INTO keyapi (owner,service,keytext,allowcustomid,date) VALUES('.$userid.','.$config['params']['defaultservice'].',"web'.$userid.'",'.$config['params']['defaultcustomid'].',NOW()) ');
+			mysql_query('INSERT INTO keyapi (owner,service,keytext,allowcustomid,date) VALUES('.$userid.','.$config['params']['defaultservice'].',"web'.$userid.'",'.$config['params']['defaultcustomid'].',NOW()) ')or die(mysql_error());
 		}
 		/*if($_SESSION['publicid']!=0){
 			mysql_query('INSERT INTO keyapi (owner,service,keytext,state,date) VALUES('.$userid.','.$config['params']['defaultservice'].',"web'.$userid.'",1,NOW()) ');
@@ -316,15 +316,15 @@ class libDb{
 		}*/
 	}
 	public function verifyLogin($username,$password){
-		$result = mysql_query('SELECT id FROM owner WHERE username="'.mysql_real_escape_string(htmlentities($username)).'" AND password="'.sha1(md5($password)).'"');
+		$result = mysql_query('SELECT id FROM owner WHERE username="'.mysql_real_escape_string(htmlentities($username)).'" AND password="'.sha1(md5($password)).'"')or die(mysql_error());
 		if(mysql_num_rows($result)!=0){
 			$resultquery = mysql_fetch_assoc($result);
 			$ownerid = $resultquery['id'];
 			$_SESSION['logued']=$ownerid;
 			if($_SESSION['publicid']!=0){
-				$result2 = mysql_query('SELECT id FROM keyapi WHERE owner='.$ownerid);
+				$result2 = mysql_query('SELECT id FROM keyapi WHERE owner='.$ownerid)or die(mysql_error());
 				$resultquery2 = mysql_fetch_assoc($result2);
-				mysql_query('UPDATE idtourl SET publicowner=0, keyid='.$resultquery2['id'].' WHERE publicowner='.$_SESSION['publicid']);
+				mysql_query('UPDATE idtourl SET publicowner=0, keyid='.$resultquery2['id'].' WHERE publicowner='.$_SESSION['publicid'])or die(mysql_error());
 				$_SESSION['publicid']=0;
 			}
 			return -1;
