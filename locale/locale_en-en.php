@@ -11,7 +11,7 @@ $locale['action'][0] = 'API key is not valid';
 $locale['action'][1] = 'URL is not valid';
 $locale['action'][2] = 'Client ID is not valid';
 $locale['action'][3] = 'Shortid not valid';
-$locale['action'][4] = 'You are not allowed to shorten URls. Please login.';
+$locale['action'][4] = 'You are not allowed to shorten URLs. Please login.';
 $locale['action'][5] = 'No key';
 $locale['action'][6] = 'No url';
 
