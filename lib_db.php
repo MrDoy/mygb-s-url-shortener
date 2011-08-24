@@ -302,8 +302,8 @@ class libDb{
 		}
 		
 		mysql_query('INSERT INTO owner (username,password,email,registerip,loginip,lastlogin) VALUES("'.mysql_real_escape_string(htmlentities($username)).'","'.sha1(md5($password)).'","'.mysql_real_escape_string($email).'","'.$_SERVER['REMOTE_ADDR'].'","'.$_SERVER['REMOTE_ADDR'].'",NOW())')or die(mysql_error());
-		//$userid = mysql_insert_id();
-		//$_SESSION['logued']=$userid;
+		$userid = mysql_insert_id();
+		$_SESSION['logued']=$userid;
 		$this->verifyLogin($username,$password);
 		include('config.php');
 		if($config['params']['allowautowebkey']){

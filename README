@@ -4,3 +4,4 @@ You set up a domain (you can have multiple domains, they're called as services).
 With a token, the user can shorten urls.
 
 This script offers lots of functions like authentication, statistics keeping something simple for the user.
+You can have as much languages as you want. It's based on the browser's info.

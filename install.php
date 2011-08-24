@@ -15,10 +15,10 @@ During the next minutes, the configuration file will be created. You'll still be
 		
 		echo '<form action="install.php?page=3" method="post">';
 ?>
-<label>Databse host : <input type="text" name="db_host"/></label><br/>
-<label>Databse user : <input type="text" name="db_user"/></label><br/>
-<label>Databse pass : <input type="text" name="db_pass"/></label><br/>
-<label>Databse base : <input type="text" name="db_base"/></label><br/><br/>
+<label>Database host : <input type="text" name="db_host"/></label><br/>
+<label>Database user : <input type="text" name="db_user"/></label><br/>
+<label>Database pass : <input type="text" name="db_pass"/></label><br/>
+<label>Database base : <input type="text" name="db_base"/></label><br/><br/>
 
 <label>Shorting domain : <input type="text" name="domain" value="http://sh.rt"/></label><br/><br/>
 
@@ -31,7 +31,7 @@ Redirect method (mod_proxy or mod_rewrite)
 <label><input type="checkbox" name="allowstats"/>Allow stats </label><br/>
 <label><input type="checkbox" name="hideip" checked="checked"/>Hide IP (very recommended if public) </label><br/>
 <label><input type="checkbox" name="allowcustomshortid"/>Allow custom short id</label><br/>
-<label><input type="checkbox" name="allowautowebkey" checked="checked"/>Allow web key (users can use main web page to shorten url</label><br/><br/>
+<label><input type="checkbox" name="allowautowebkey" checked="checked"/>Allow web key (users can use main web page to shorten urls)</label><br/><br/>
 
 <input type="submit"/>
 
@@ -191,6 +191,19 @@ CREATE TABLE IF NOT EXISTS `service` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 ')or die(mysql_error());
+
+mysql_query('CREATE TABLE IF NOT EXISTS `stats` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `idurl` int(11) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ip` text NOT NULL,
+  `useragent` text NOT NULL,
+  `referer` text NOT NULL,
+  `accept` text NOT NULL,
+  `country` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=14359 ;')or die(mysql_error());
+
 mysql_query('INSERT INTO `service` (`id`, `host`, `length`) VALUES
 (1, \''.preg_replace('#https?:\/\/#','',$_POST['domain']).'\', 5);
 INSERT INTO `owner` (`id`, `username`, `password`, `email`, `loginip`, `registerip`, `lastlogin`) VALUES
