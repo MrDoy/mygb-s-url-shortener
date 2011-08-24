@@ -1,6 +1,6 @@
 	<script type="text/javascript">
             function shorturl(){
-                alert(document.getElementById('inputurl').value);
+                //alert(document.getElementById('inputurl').value);
                 var xhr = new XMLHttpRequest();
                 if(window.XMLHttpRequest || window.ActiveXObject) {
                     if(window.ActiveXObject) {
