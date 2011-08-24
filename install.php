@@ -205,11 +205,16 @@ mysql_query('CREATE TABLE IF NOT EXISTS `stats` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=14359 ;')or die(mysql_error());
 
 mysql_query('INSERT INTO `service` (`id`, `host`, `length`) VALUES
-(1, \''.preg_replace('#https?:\/\/#',$_POST['domain']).'\', 5)')or die(mysql_error());
+(1, \''.preg_replace('#https?:\/\/#','',$_POST['domain']).'\', 5)')or die(mysql_error());
 mysql_query('INSERT INTO `owner` (`id`, `username`, `password`, `email`, `loginip`, `registerip`, `lastlogin`) VALUES
 (1, \'test\', \'55c3b5386c486feb662a0785f340938f518d547f\', \'email@example.com\', "'.$_SERVER['REMOTE_ADDR'].'", "'.$_SERVER['REMOTE_ADDR'].'", NOW())')or die(mysql_error());
 mysql_query('INSERT INTO `keyapi` (`id`, `owner`, `service`, `keytext`, `allowcustomid`, `date`, `state`) VALUES
-(1, 1, 1, \"myfirstkey\", '.$customshortid.', NOW(), 0)')or die(mysql_error());
+(1, 1, 1, \'myfirstkey\', '.$customshortid.', NOW(), 0)')or die(mysql_error());
+
+if(isset($_POST['allowautowebkey'])){
+	mysql_query('INSERT INTO `keyapi` (`id`, `owner`, `service`, `keytext`, `allowcustomid`, `date`, `state`) VALUES
+(1, 1, 1, \'web\', '.$customshortid.', NOW(), 0)')or die(mysql_error());
+}
 
 
 	}
