@@ -20,7 +20,7 @@ During the next minutes, the configuration file will be created. You'll still be
 <label>Database pass : <input type="text" name="db_pass"/></label><br/>
 <label>Database base : <input type="text" name="db_base"/></label><br/><br/>
 
-<label>Shorting domain : <input type="text" name="domain" value="http://sh.rt"/></label><br/><br/>
+<label>Shorting domain : <input type="text" name="domain" value="<?php echo 'http://'.$_SERVER['HTTP_HOST'].preg_replace('#(\/install.php.*)#','',$_SERVER['REQUEST_URI']); ?>"/></label><br/><br/>
 
 Redirect method (mod_proxy or mod_rewrite)
 <label><input type="radio" name="redirect_method" value="false" checked="checked"/>Mod rewrite</label>
@@ -117,7 +117,6 @@ RewriteEngine On
 
 RewriteRule ^([A-Za-z0-9]+)\.html$ index.php?page=$1
 
-RewriteCond %{HTTP_HOST} ^'.$_POST['domain'].'$
 RewriteRule ^([A-Za-z0-9_\-]{2,8})$ '.$_POST['domain'].'/redirect.php?id=$1
 RewriteRule ^([A-Za-z0-9_\-]{2,8})\+$ index.php?page=infos&id=$1
 RewriteRule ^([A-Za-z0-9_\-]{2,8})\+\+$ index.php?page=infos&id=$1&format=raw');

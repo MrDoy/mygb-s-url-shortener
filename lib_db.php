@@ -38,7 +38,10 @@ class libDb{
 			if(preg_match($this->shortidpattern,$shortid)){
 				if($this->ressource!=FALSE){
 					try{
-						$query = mysql_query('SELECT idtourl.id,idtourl.url FROM idtourl LEFT JOIN keyapi ON keyapi.id=idtourl.keyid LEFT JOIN service ON service.id=keyapi.service WHERE shortid = "'.$shortid.'" AND service.host="'.mysql_real_escape_string($properties['HTTP_HOST']).'"')or die(mysql_error());
+						$pathtoremove = explode('/',$properties['REQUEST_URI']);
+						unset($pathtoremove[count($pathtoremove)-1]);
+						
+						$query = mysql_query('SELECT idtourl.id,idtourl.url FROM idtourl LEFT JOIN keyapi ON keyapi.id=idtourl.keyid LEFT JOIN service ON service.id=keyapi.service WHERE shortid = "'.$shortid.'" AND service.host="'.mysql_real_escape_string($properties['HTTP_HOST']).mysql_real_escape_string(implode('/',$pathtoremove)).'"')or die(mysql_error());
 						$url = mysql_fetch_assoc($query);
 						if(!empty($url)){
 							
